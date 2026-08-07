@@ -8,60 +8,35 @@
 import json
 from pathlib import Path
 
-# 설정: 파일 경로와 카테고리 목록
-DATA_FILE = Path("prompts.json")      # 프롬프트 저장 파일
-EXPORT_DIR = Path("exports")          # Markdown 내보내기 폴더
+DATA_FILE = Path("prompts.json")
+EXPORT_DIR = Path("exports")
 
 CATEGORIES = ["텍스트 생성", "이미지 생성", "영상 생성", "페르소나", "자동화", "기타"]
 
-# 기본 프롬프트 데이터 (이전 미션 B1-2에서 작성한 프롬프트 3개)
 DEFAULT_PROMPTS = [
     {
         "title": "MagSafe 거치대 제품컷 - 매트블랙 라이프스타일",
-        "content": (
-            "A sleek matte black metallic MagSafe phone mount, set up as a minimal "
-            "stand on a clean light-wood cafe table. An iPhone is magnetically attached "
-            "to it. A cup of iced Americano and an aesthetic journal in the softly "
-            "blurred background. Warm sunlight filtering through a window, bright and "
-            "cozy vibe, lifestyle tech accessory photography, 8k, photorealistic --ar 9:16"
-        ),
+        "content": "A sleek matte black metallic MagSafe phone mount, set up as a minimal stand on a clean light-wood cafe table. An iPhone is magnetically attached to it. A cup of iced Americano and an aesthetic journal in the softly blurred background. Warm sunlight filtering through a window, bright and cozy vibe, lifestyle tech accessory photography, 8k, photorealistic --ar 9:16",
         "category": "이미지 생성",
         "favorite": False,
     },
     {
         "title": "MagSafe 거치대 제품컷 - 스타라이트 크림 카페",
-        "content": (
-            "A sleek, minimalist MagSafe smartphone mount in a soft starlight cream "
-            "color, set up as a desk stand on a white marble cafe table. An iPhone is "
-            "magnetically attached. Next to it is a beautifully poured latte and an open "
-            "aesthetic journal. Soft natural sunlight filtering through a large window, "
-            "cozy and aesthetic cafe background, photorealistic, 8k, high-end product "
-            "photography."
-        ),
+        "content": "A sleek, minimalist MagSafe smartphone mount in a soft starlight cream color, set up as a desk stand on a white marble cafe table. An iPhone is magnetically attached. Next to it is a beautifully poured latte and an open aesthetic journal. Soft natural sunlight filtering through a large window, cozy and aesthetic cafe background, photorealistic, 8k, high-end product photography.",
         "category": "이미지 생성",
         "favorite": False,
     },
     {
         "title": "MagSafe 거치대 제품컷 - 카라비너 고리 키링 연출",
-        "content": (
-            "[연출 지시] 첨부 이미지의 고리(카라비너) 부분을 이용해 가방 고리에 "
-            "키링처럼 매단 모습. 제품 원형 변경 절대 금지, 포인트 색상 등 색상 변경 가능.\n"
-            "A sleek matte black metallic MagSafe phone mount, set up as a minimal "
-            "stand on a clean light-wood cafe table. An iPhone is magnetically attached "
-            "to it. A cup of latte and an aesthetic journal in the softly blurred "
-            "background. Warm sunlight filtering through a window, bright and cozy vibe, "
-            "lifestyle tech accessory photography, 8k, photorealistic --ar 9:16"
-        ),
+        "content": "[연출 지시] 첨부 이미지의 고리(카라비너) 부분을 이용해 가방 고리에 키링처럼 매단 모습. 제품 원형 변경 절대 금지, 포인트 색상 등 색상 변경 가능. A sleek matte black metallic MagSafe phone mount clipped to a bag, lifestyle tech accessory photography, 8k, photorealistic --ar 9:16",
         "category": "이미지 생성",
         "favorite": False,
     },
 ]
 
-# 실행 중 프롬프트를 담는 리스트 (리스트 안에 딕셔너리)
 prompts = []
 
 
-# 보너스1: JSON 저장 / 불러오기
 def load_prompts():
     """prompts.json이 있으면 읽고, 없으면 기본 데이터로 새로 만든다."""
     global prompts
@@ -74,12 +49,11 @@ def load_prompts():
 
 
 def save_prompts():
-    """현재 prompts 목록을 JSON 파일에 저장한다 (한글 깨짐 방지)."""
+    """현재 prompts 목록을 JSON 파일에 저장한다."""
     with open(DATA_FILE, "w", encoding="utf-8") as f:
         json.dump(prompts, f, ensure_ascii=False, indent=2)
 
 
-# 입력 도우미 함수
 def input_required(message):
     """빈 값이면 다시 입력받는다."""
     while True:
@@ -90,12 +64,11 @@ def input_required(message):
 
 
 def select_category():
-    """미리 정의된 목록에서 카테고리를 선택하거나 직접 입력한다."""
+    """카테고리를 번호로 선택하거나 직접 입력한다."""
     print("\n카테고리 선택:")
     for i, name in enumerate(CATEGORIES, start=1):
         print(f"{i}) {name}")
     choice = input_required("선택: ")
-
     if choice.isdigit() and 1 <= int(choice) <= len(CATEGORIES):
         selected = CATEGORIES[int(choice) - 1]
         if selected == "기타":
@@ -105,11 +78,10 @@ def select_category():
 
 
 def is_duplicate_title(title):
-    """같은 제목이 이미 있는지 확인한다 (영어 대소문자 무시)."""
+    """같은 제목이 이미 있는지 확인한다."""
     return any(p["title"].lower() == title.lower() for p in prompts)
 
 
-# 화면 출력 도우미
 def star(favorite):
     return " ⭐" if favorite else ""
 
@@ -118,7 +90,6 @@ def print_prompt_line(index, prompt):
     print(f"{index}. [{prompt['category']}] {prompt['title']}{star(prompt['favorite'])}")
 
 
-# 메뉴
 def show_menu():
     print("\n=== 나만의 프롬프트 관리 ===")
     print("1. 프롬프트 추가")
@@ -132,7 +103,6 @@ def show_menu():
     print("0. 종료")
 
 
-# 1. 프롬프트 추가
 def add_prompt():
     print("\n=== 프롬프트 추가 ===")
     title = input_required("제목: ")
@@ -141,18 +111,11 @@ def add_prompt():
         return
     content = input_required("내용: ")
     category = select_category()
-
-    prompts.append({
-        "title": title,
-        "content": content,
-        "category": category,
-        "favorite": False,
-    })
+    prompts.append({"title": title, "content": content, "category": category, "favorite": False})
     save_prompts()
     print("\n프롬프트가 추가되었습니다!")
 
 
-# 2. 프롬프트 목록
 def show_prompt_list():
     print("\n=== 프롬프트 목록 ===")
     if not prompts:
@@ -163,44 +126,34 @@ def show_prompt_list():
     print(f"\n총 {len(prompts)}개의 프롬프트")
 
 
-# 3. 카테고리별 조회
 def show_by_category():
     print("\n=== 카테고리별 조회 ===")
     category = select_category()
     matched = [p for p in prompts if p["category"] == category]
-
     if not matched:
         print(f"\n[{category}] 카테고리의 프롬프트가 없습니다.")
         return
-
     print(f"\n[{category}] 카테고리 프롬프트:")
     for i, p in enumerate(matched, start=1):
         print(f"{i}. {p['title']}{star(p['favorite'])}")
     print(f"\n총 {len(matched)}개의 프롬프트")
 
 
-# 4. 프롬프트 검색
 def search_prompt():
     print("\n=== 프롬프트 검색 ===")
     keyword = input_required("검색어: ").lower()
-    matched = [
-        p for p in prompts
-        if keyword in p["title"].lower() or keyword in p["content"].lower()
-    ]
-
+    matched = [p for p in prompts if keyword in p["title"].lower() or keyword in p["content"].lower()]
     if not matched:
         print("\n검색 결과가 없습니다.")
         return
-
     print("\n검색 결과:")
     for i, p in enumerate(matched, start=1):
         print_prompt_line(i, p)
     print(f"\n{len(matched)}개의 프롬프트를 찾았습니다.")
 
 
-# 5. 프롬프트 상세 보기
 def get_index_by_number(message):
-    """번호를 입력받아 유효하면 리스트 인덱스를, 아니면 None을 돌려준다."""
+    """번호를 입력받아 유효하면 인덱스를, 아니면 None을 돌려준다."""
     value = input(message).strip()
     if not value.isdigit():
         print("숫자를 입력해주세요.")
@@ -232,7 +185,6 @@ def show_detail():
     print(line)
 
 
-# 6. 즐겨찾기 관리 (추가/해제 토글)
 def toggle_favorite():
     print("\n=== 즐겨찾기 관리 ===")
     if not prompts:
@@ -250,7 +202,6 @@ def toggle_favorite():
         print(f"'{p['title']}' 프롬프트를 즐겨찾기에서 해제했습니다!")
 
 
-# 7. 즐겨찾기 목록
 def show_favorites():
     print("\n=== 즐겨찾기 목록 ===")
     favorites = [p for p in prompts if p["favorite"]]
@@ -262,19 +213,15 @@ def show_favorites():
     print(f"\n총 {len(favorites)}개의 즐겨찾기")
 
 
-# 8. 보너스1: 카테고리별 Markdown 내보내기
 def export_markdown():
     print("\n=== Markdown 내보내기 ===")
     if not prompts:
         print("내보낼 프롬프트가 없습니다.")
         return
-
     EXPORT_DIR.mkdir(exist_ok=True)
-
     grouped = {}
     for p in prompts:
         grouped.setdefault(p["category"], []).append(p)
-
     for category, items in grouped.items():
         safe_name = category.replace("/", "_").replace(" ", "_")
         file_path = EXPORT_DIR / f"{safe_name}.md"
@@ -284,18 +231,16 @@ def export_markdown():
                 mark = " ⭐" if p["favorite"] else ""
                 f.write(f"## {p['title']}{mark}\n\n")
                 f.write(f"{p['content']}\n\n")
-
     print(f"Markdown 파일을 {EXPORT_DIR}/ 폴더에 저장했습니다!")
     print(f"생성된 카테고리 파일 수: {len(grouped)}개")
 
 
-# 메인 루프
 def main():
     load_prompts()
+    print("\n환영합니다! 나만의 프롬프트 관리 프로그램입니다.")
     while True:
         show_menu()
         choice = input("선택: ").strip()
-
         if choice == "1":
             add_prompt()
         elif choice == "2":
@@ -321,3 +266,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    
