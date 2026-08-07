@@ -45,3 +45,9 @@ Python & Git 기초 과제 - 터미널에서 메뉴 번호를 입력해 AI 프�
 - 이름: 오주연
 - GitHub: https://github.com/jjjoy1114/A1_1_prompt_manager
 
+## 파일 구성
+
+- prompt_manager.py : 실행 코드
+- prompts.json : 프롬프트 저장 데이터
+- README.md : 설명 문서
+- .gitignore : Git 추적 제외 설정
