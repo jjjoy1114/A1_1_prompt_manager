@@ -91,7 +91,7 @@ def print_prompt_line(index, prompt):
 
 
 def show_menu():
-    print("\n=== 나만의 프롬프트 관리 ===")
+    print(f"\n=== 나만의 프롬프트 관리 (총 {len(prompts)}개) ===")
     print("1. 프롬프트 추가")
     print("2. 프롬프트 목록")
     print("3. 카테고리별 조회")
